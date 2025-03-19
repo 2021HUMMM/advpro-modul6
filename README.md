@@ -25,3 +25,10 @@ This Rust function, `handle_connection`, processes incoming HTTP requests and re
 
 The function then reads the selected file’s contents, calculates its length, and constructs an HTTP response with headers. Finally, the response is written to the client using `stream.write_all()`. This modification adds a delay for specific requests, making it useful for simulating slow-loading pages or testing concurrency in a multi-threaded server.
 
+### 5. Commit 5 reflection note:
+
+This Rust implementation creates a simple **multi-threaded web server** using a thread pool to handle multiple incoming connections concurrently. The `main` function initializes a `TcpListener` bound to `127.0.0.1:7878` and a `ThreadPool` with four worker threads. When a client connects, the server assigns the `handle_connection` function to a worker thread using `pool.execute()`, allowing multiple requests to be processed in parallel.
+
+The `ThreadPool` in `lib.rs` manages a fixed number of worker threads. It uses **message passing** (`mpsc::channel()`) to distribute jobs and **Arc + Mutex** to safely share the job queue among workers. Each worker continuously listens for new tasks in a loop, locks the queue, retrieves a job, and executes it. This setup efficiently distributes HTTP request handling across multiple threads, improving performance by allowing concurrent request processing instead of handling connections sequentially.
+
+
