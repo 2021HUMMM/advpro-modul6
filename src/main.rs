@@ -10,7 +10,9 @@ use hello::ThreadPool;
 
 fn main() {
     let listener = TcpListener::bind("127.0.0.1:7878").unwrap();
-    let pool = ThreadPool::new(4);
+    
+    // Use `build` instead of `new`
+    let pool = ThreadPool::build(4).expect("Failed to create thread pool");
 
     for stream in listener.incoming() {
         let stream = stream.unwrap();
@@ -20,6 +22,7 @@ fn main() {
         });
     }
 }
+
 fn handle_connection(mut stream: TcpStream) {
     let buf_reader = BufReader::new(&mut stream);
     let request_line = buf_reader.lines().next().unwrap().unwrap();
